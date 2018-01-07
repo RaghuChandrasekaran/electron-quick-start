@@ -1,8 +1,16 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-const request = require('request');
+const {
+    ipcRenderer
+} = require('electron')
+const request = require('request')
 const root = 'https://jsonplaceholder.typicode.com';
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+    console.log(new Date());
+    triggerCall();
+})
 
 function triggerCall() {
     request({
@@ -13,6 +21,7 @@ function triggerCall() {
             console.log(err);
             return;
         } else {
+            console.log(new Date());
             console.log(body);
             request({
                 url: root + '/posts/2',
@@ -22,15 +31,10 @@ function triggerCall() {
                     console.log(err);
                     return;
                 } else {
+                    console.log(new Date());
                     console.log(body);
                 }
             })
         }
     })
 }
-
-window.addEventListener("load", function() {
-    document.querySelector("#sendRequest").addEventListener("click", function() {
-        triggerCall();
-    });
-});
